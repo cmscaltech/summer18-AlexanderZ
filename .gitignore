@@ -1,0 +1,23 @@
+
+#temporary sources
+*.swp
+
+#compiled files
+*.pyc
+
+#ignore on-file tuning results
+
+interface/**
+!interface/.gitkeep
+
+
+pythia_space/Output_text/**
+!pythia_space/Output_text/.gitkeep
+
+pythia_space/Output_csv/**
+!pythia_space/Output_csv/.gitkeep
+!pythia_space/Output_csv/output_bin_errors_Monash.csv
+!pythia_space/Output_csv/output_bin_contents_Monash.csvs
+
+#system generated things
+.DS_Store
