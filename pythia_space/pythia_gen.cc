@@ -51,11 +51,11 @@ int main(int argc, char* argv[])
 
   // Block 2 Hists:
   Hist hChargeMulti_udsc("Charge Multiplicity (udsc)",28,1.0,57.0);
-  Hist hChargeMulti_b("Charge Multiplicity (b)",28,1.0,57.0);
+  Hist hChargeMulti_b("Charge Multiplicity (b)",27,3.0,57.0);
   Hist hMomentFrac_udsc("Charged Momentum Fraction (udsc)",40,0.0,8.0);
   Hist hMomentFrac_b("Charged Momentum Fraction (b)",40,0.0,8.0);
-  Hist hMomentFrac_Dstar("x(D^{*#pm})",20,0.0,1.0);
-  Hist hMomentFrac_Bweak("x_{B}^{weak}",20,0.0,1.0);
+  Hist hMomentFrac_Dstar("x(D^{*#pm})",18,0.1,1.0);
+  Hist hMomentFrac_Bweak("x_{B}^{weak}",22,0.12,1.0);
 
   // Block 3: hadron counters: 
   // assignement for each bin listed at the end
@@ -368,11 +368,11 @@ int main(int argc, char* argv[])
   Hists.push_back(hB_T_b);Nbins.push_back(19);
 
   Hists.push_back(hChargeMulti_udsc);Nbins.push_back(28);
-  Hists.push_back(hChargeMulti_b);Nbins.push_back(28);
+  Hists.push_back(hChargeMulti_b);Nbins.push_back(27);
   Hists.push_back(hMomentFrac_udsc);Nbins.push_back(40);
   Hists.push_back(hMomentFrac_b);Nbins.push_back(40);
-  Hists.push_back(hMomentFrac_Dstar);Nbins.push_back(20);
-  Hists.push_back(hMomentFrac_Bweak);Nbins.push_back(20);
+  Hists.push_back(hMomentFrac_Dstar);Nbins.push_back(18);
+  Hists.push_back(hMomentFrac_Bweak);Nbins.push_back(22);
 
   /****************************************************/
   /***********   Output Histograms   ******************/

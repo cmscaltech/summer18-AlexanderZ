@@ -20,8 +20,8 @@ def get_objective_func(params, metric):
     outputFile_bin_contents = '{}/output_bin_contents.csv'.format(csv_Dir)
     outputFile_bin_errors   = '{}/output_bin_errors.csv'.format(csv_Dir)
 
-    object_contents = '{}/output_bin_contents_Monash.csv'.format(csv_Dir)
-    object_errors   = '{}/output_bin_errors_Monash.csv'.format(csv_Dir)
+    object_contents = '{}/output_bin_contents_exp.csv'.format(csv_Dir)
+    object_errors   = '{}/output_bin_errors_exp.csv'.format(csv_Dir)
 
     tune_contents   = '{}/output_bin_contents.csv'.format(csv_Dir)
     tune_errors     = '{}/output_bin_errors.csv'.format(csv_Dir)
