@@ -31,7 +31,13 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
     
     ranges = {'probStoUD': Real(low=0, high=1, prior='uniform', transform='identity'), 'probQQtoQ': Real(low=0, high=1, prior='uniform', transform='identity'), 'probSQtoQQ': Real(low=0, high=1, prior='uniform', transform='identity'), 'probQQ1toQQ0': Real(low=0, high=1, prior='uniform', transform='identity'), 'mesonUDvector': Real(low=0, high=3, prior='uniform', transform='identity'), 'mesonSvector': Real(low=0, high=3, prior='uniform', transform='identity'), 'mesonCvector': Real(low=0, high=3, prior='uniform', transform='identity'), 'mesonBvector': Real(low=0, high=3, prior='uniform', transform='identity'), 'etaSup': Real(low=0, high=1, prior='uniform', transform='identity'), 'etaPrimeSup': Real(low=0, high=1, prior='uniform', transform='identity'), 'popcornSpair': Real(low=0.9, high=1, prior='uniform', transform='identity'), 'popcornSmeson': Real(low=0.5, high=1, prior='uniform', transform='identity'), 'aLund': Real(low=0.2, high=2, prior='uniform', transform='identity'), 'bLund': Real(low=0.2, high=2, prior='uniform', transform='identity'), 'aExtraSquark': Real(low=0, high=2, prior='uniform', transform='identity'), 'aExtraDiquark': Real(low=0, high=2, prior='uniform', transform='identity'), 'rFactC': Real(low=0, high=2, prior='uniform', transform='identity'), 'rFactB': Real(low=0, high=2, prior='uniform', transform='identity'), 'sigma': Real(low=0, high=1, prior='uniform', transform='identity'), 'enhancedFraction': Real(low=0.01, high=1, prior='uniform', transform='identity'), 'enhancedWidth': Real(low=1, high=10, prior='uniform', transform='identity'), 'alphaSvalue': Real(low=0.06, high=0.25, prior='uniform', transform='identity'), 'pTmin': Real(low=0.1, high=2, prior='uniform', transform='identity'), 'pTminChgQ': Real(low=0.1, high=2, prior='uniform', transform='identity')}
     
-    trueParams = {'probStoUD': 0.217, 'probQQtoQ': 0.081, 'probSQtoQQ': 0.915, 'probQQ1toQQ0': 0.0275, 'mesonUDvector': 0.50, 'mesonSvector': 0.55, 'mesonCvector': 0.88, 'mesonBvector': 2.20, 'etaSup': 0.60, 'etaPrimeSup': 0.12, 'popcornSpair': 0.90, 'popcornSmeson': 0.50, 'aLund': 0.68, 'bLund': 0.98, 'aExtraSquark': 0.00, 'aExtraDiquark': 0.97, 'rFactC': 1.32, 'rFactB': 0.855, 'sigma': 0.335, 'enhancedFraction': 0.01, 'enhancedWidth': 2.0, 'alphaSvalue': 0.1365, 'pTmin': 0.5, 'pTminChgQ': 0.5}
+    monashParams = {'probStoUD': 0.217, 'probQQtoQ': 0.081, 'probSQtoQQ': 0.915, 'probQQ1toQQ0': 0.0275, 'mesonUDvector': 0.50, 'mesonSvector': 0.55, 'mesonCvector': 0.88, 'mesonBvector': 2.20, 'etaSup': 0.60, 'etaPrimeSup': 0.12, 'popcornSpair': 0.90, 'popcornSmeson': 0.50, 'aLund': 0.68, 'bLund': 0.98, 'aExtraSquark': 0.00, 'aExtraDiquark': 0.97, 'rFactC': 1.32, 'rFactB': 0.855, 'sigma': 0.335, 'enhancedFraction': 0.01, 'enhancedWidth': 2.0, 'alphaSvalue': 0.1365, 'pTmin': 0.5, 'pTminChgQ': 0.5}
+    professorParams = {'probStoUD': 0.19, 'probQQtoQ': 0.09, 'probSQtoQQ': 1.00, 'probQQ1toQQ0': 0.027, 'mesonUDvector': 0.62, 'mesonSvector': 0.725, 'mesonCvector': 1.06, 'mesonBvector': 3.0, 'etaSup': 0.63, 'etaPrimeSup': 0.12, 'popcornSpair': 0.50, 'popcornSmeson': 0.50, 'aLund': 0.3, 'bLund': 0.8, 'aExtraSquark': 0.00, 'aExtraDiquark': 0.50, 'rFactC': 1.00, 'rFactB': 0.67, 'sigma': 0.304, 'enhancedFraction': 0.01, 'enhancedWidth': 2.0, 'alphaSvalue': 0.1383, 'pTmin': 0.4, 'pTminChgQ': 0.4}
+    monashParamValues = []
+    professorParamValues = []
+    for p in paramNames:
+        monashParamValues.append(monashParams[p])
+        professorParamValues.append(professorParams[p])
     
     paramRanges = []
     for p in paramNames:
@@ -46,11 +52,11 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
     prefix = metric + '_'
     
     if preprocess:
-        trueFitness = get_objective_func(trueParams, metric)
+        trueFitness = get_objective_func(monashParams, metric)
         print 'distance with true params: {}'.format(trueFitness)
         
-#         for p in trueParams.keys():
-#             params = dict(trueParams)
+#         for p in monashParams.keys():
+#             params = dict(monashParams)
 #             randomFitness = 0
 #             for i in range(2):
 #                 params[p] = ranges[p].rvs()[0]
@@ -59,7 +65,8 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
 #             print 'distance after randomizing {}: {}'.format(p, randomFitness)
     
     if genetic:
-        opt = GA(paramRanges, populationSize, generations)
+        initialPopulation = [monashParamValues, professorParamValues]
+        opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
         for g in range(generations):
             population = opt.ask()
             fitnesses = []

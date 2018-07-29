@@ -17,7 +17,7 @@ class GA(object):
     
     nonuniformityMutationConstant = 3
     
-    def __init__(self, dimensions, populationSize, maxGenerations):
+    def __init__(self, dimensions, populationSize, maxGenerations, initialPopulation=[]):
         self.paramRanges = dimensions
         self.numParams = len(self.paramRanges)
         self.populationSize = populationSize
@@ -25,8 +25,8 @@ class GA(object):
         self.fitness = np.array([None]*populationSize)
         self.maxGenerations = maxGenerations
         
-        population = []
-        for i in range(0, populationSize):
+        population = initialPopulation
+        for i in range(len(population), populationSize):
             chromosome = []
             for j in range(0, self.numParams):
                 gene = float(self.paramRanges[j].rvs()[0])

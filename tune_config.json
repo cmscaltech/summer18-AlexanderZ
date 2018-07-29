@@ -1,8 +1,7 @@
-
 {
   "N_events" : 250000,
   "n_cores"  : 25,
   "block1"   : "True",
-  "block2"   : "False",
-  "block3"   : "False"
+  "block2"   : "True",
+  "block3"   : "True"
 }
