@@ -17,7 +17,9 @@ pythia_space/Output_text/**
 pythia_space/Output_csv/**
 !pythia_space/Output_csv/.gitkeep
 !pythia_space/Output_csv/output_bin_errors_Monash.csv
-!pythia_space/Output_csv/output_bin_contents_Monash.csvs
+!pythia_space/Output_csv/output_bin_contents_Monash.csv
+!pythia_space/Output_csv/output_bin_contents_exp.csv
+!pythia_space/Output_csv/output_bin_errors_exp.csv
 
 #system generated things
 .DS_Store

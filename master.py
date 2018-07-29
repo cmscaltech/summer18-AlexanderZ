@@ -10,9 +10,9 @@ import numpy as np
 from genetic_algorithm import GA
 
 def main(config_file, preprocess=False, genetic=True, bayesian=False):
-    iterations = 10
+    iterations = 80
     generations = iterations
-    populationSize = 100
+    populationSize = 500
     
     
     print config_file
@@ -81,6 +81,7 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
             print 'finished GENERATION {} out of {}'.format(g+1, generations)
             bestFit = opt.tell(population, 1/np.array(fitnesses), g)
             bestParams = bestFit[0]
+            print 'best params so far: {}'.format(bestParams)
             paramHistory.append(np.array(bestFit[0]))
             fitnessHistory.append(1/bestFit[1])
             avgFitnessHistory.append(1/(sum(fitnesses)/len(fitnesses)))
