@@ -1,4 +1,5 @@
 import os
+from random import randint
 import numpy as np
 import csv
 import subprocess
@@ -10,7 +11,7 @@ import scipy.stats
 
 WorkHOME = os.environ['WorkHOME']
 
-def get_objective_func(params, metric):
+def get_objective_func(params, metric, N_events=None):
 
     bin_widths_block1 = [0.025,0.025,0.05,0.05,0.032,0.032,0.015,0.015,0.02,0.02]
     bin_widths_block2 = [0.2,0.2,0.05,0.05]
@@ -35,8 +36,9 @@ def get_objective_func(params, metric):
     config = load_config(config_file)
 
     n_cores = config['n_cores']
-
-    N_events = config['N_events']
+    
+    if N_events is None:
+        N_events = config['N_events']
 
     Nevents, remainder = divmod(N_events,n_cores)
     if remainder != 0:
@@ -150,7 +152,7 @@ def GenPythia(job_id,Nevents,WorkHOME):
     PythiaInputFile=PythiaSpaceDir+'/pythia_input.txt'
     Dir_OutputText=PythiaSpaceDir+'/Output_text'
     Dir_OutputCSV=PythiaSpaceDir+'/Output_csv'
-    shell_command = '{}/pythia_gen {} {} {} {}/out_bin_content_{}.csv > {}/Output_{}.txt 2>&1'.format(PythiaSpaceDir,int(job_id),Nevents,
+    shell_command = '{}/pythia_gen {} {} {} {}/out_bin_content_{}.csv > {}/Output_{}.txt 2>&1'.format(PythiaSpaceDir,randint(0, 900000000),Nevents,
                                                                             PythiaInputFile,
                                                                             Dir_OutputCSV,int(job_id),
                                                                             Dir_OutputText,int(job_id))
@@ -339,7 +341,10 @@ def bin_by_bin_normalize(hist,norm,output_content,output_error):
     error_row   = []
 
     for ibin in range(1,len(hist)-1):
-        content = hist[ibin]/norm
+        if norm == 0:
+            content = 0
+        else:
+            content = hist[ibin]/norm
         content_row.append(content)
         error = Get_Ratio_Error_Numbers(hist[ibin],norm)
         error_row.append(error) 
@@ -352,7 +357,10 @@ def bin_by_bin_normalize_rates(hist,norm,output_content,output_error):
     error_row   = []
 
     for ibin in range(len(hist)):
-        content = hist[ibin]/norm
+        if norm == 0:
+            content = 0
+        else:
+            content = hist[ibin]/norm
         content_row.append(content)
         error = Get_Ratio_Error_Numbers(hist[ibin],norm)
         error_row.append(error) 
