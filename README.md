@@ -28,4 +28,4 @@ The tuning configuration is specified in the `tune_config.json` file at the top-
 
 **STEP 3: Run the tune**
 
-Now you should be able to run a MC tuning by simply executing the `master.py` code with command `$ python master.py <tune_config.json>` at the top-level, where `<tune_config.json>` should be the config file described in the previous step. 
+Now you should be able to run a MC tuning by simply executing the `master.py` code with command `$ python master.py -c <tune_config.json>` at the top-level, where `<tune_config.json>` should be the config file described in the previous step. Additional options for the genetic algorithm tune are `--generations`, `--population-size`, and `--max-events`.
