@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import json
@@ -9,10 +10,12 @@ from skopt import expected_minimum
 import numpy as np
 from genetic_algorithm import GA
 
-def main(config_file, preprocess=False, genetic=True, bayesian=False):
-    iterations = 60
-    generations = iterations
-    populationSize = 400
+def main(args, preprocess=False, genetic=True, bayesian=False):
+    config_file = args.config_file
+    generations = args.generations
+    iterations = generations
+    populationSize = args.population_size
+    maxEvents = args.max_events
     
     
     print config_file
@@ -61,6 +64,15 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
         trueFitness = get_objective_func(monashParams, metric)
         print 'distance with true params: {}'.format(trueFitness)
         
+        fitValues = [0.13208249393929786, 0.51994805609029804, 0.25, 0.77965189303083682, 1.0901868268136528, 1.0405344632358078, 8.0080159491002171e-05, 0.3282750911993525, 1.307123178350605, 0.24494190072820199, 0.34232941807977046, 0.021253594068452883, 0.70945494182953883, 0.31633982796247129, 0.082106591462099546, 0.17715548897442518, 0.93070556103172952, 1.2263012176090409, 0.98127718161464395]
+        fitParams = {}
+        i = 0
+        for p in paramNames:
+            fitParams[p] = fitValues[i]
+            i += 1
+        fitFitness = get_objective_func(fitParams, metric)
+        print 'distance with fitted params: {}'.format(fitFitness)
+        
 #         for p in monashParams.keys():
 #             params = dict(monashParams)
 #             randomFitness = 0
@@ -83,7 +95,7 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
                     params[p] = paramValues[i]
                     i += 1
                 #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))
-                fitness = get_objective_func(params, metric, N_events=250000/1.001*(0.001 + 1/(1+np.exp(-(g+1-generations/2)/2))))
+                fitness = get_objective_func(params, metric, N_events=maxEvents/1.001*(0.001 + 1/(1+np.exp(-(g+1-generations/2)/2))))
                 fitnesses.append(fitness)
             print 'finished GENERATION {} out of {}'.format(g+1, generations)
             bestFit = opt.tell(population, 1/np.array(fitnesses), g)
@@ -131,12 +143,17 @@ def main(config_file, preprocess=False, genetic=True, bayesian=False):
         np.savetxt(prefix + 'bayesParamHistory.txt', np.array(paramHistory))
         np.savetxt(prefix + 'bayesHistory.txt', np.array(fitnessHistory))
         
-    return bestParams, fitnessHistory
-        
 
 #     new_expt = str_to_bool(config['new_expt'])
 #     spearmint_dir = config['spearmint_dir']
 #     start_spearmint_tune(spearmint_dir,WorkHOME,new_expt)
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config-file', help='configuration file for tune')
+    parser.add_argument('-g', '--generations', help='number of generations', type=int, default=50)
+    parser.add_argument('-p', '--population-size', help='population size', type=int, default=400)
+    parser.add_argument('-e', '--max-events', help='maximum number of pythia events to evaluate per parameter set', type=int, default=250000)
+    args = parser.parse_args()
+    main(args)
+#     main(sys.argv[1])
