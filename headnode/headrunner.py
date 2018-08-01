@@ -1,16 +1,18 @@
 from genetic_algorithm import GA
 import numpy as np
 import subprocess
+import argparse
 
 def main(args):
     populationSize = args.population_size
     generations = args.generations
+    maxEvents = args.max_events
     
     # ranges to improve monash (+/- 50% of monash tune values, edited so professor params are within range)
-    range = {'probStoUD' : [0.1085, 0.3255], 'probQQtoQ' : [0.0405, 0.1215], 'probSQtoQQ' : [0.4575, 1], 'probQQ1toQQ0' : [0.01375, 0.04125], 'mesonUDvector' : [0.25, 0.75], 'mesonSvector' : [0.275, 0.825], 'mesonCvector' : [0.44, 1.32], 'mesonBvector' : [1.1, 3], 'etaSup' : [0.3, 0.9], 'etaPrimeSup' : [0.06, 0.18], 'popcornSpair' : [0.9, 1], 'popcornSmeson' : [0.5, 0.75], 'aLund' : [0.25, 1.02], 'bLund' : [0.49, 1.47], 'aExtraSquark' : [0, 0.0001], 'aExtraDiquark' : [0.485, 1.455], 'rFactC' : [0.66, 1.98], 'rFactB' : [0.4275, 1.2825], 'sigma' : [0.1675, 0.5025], 'enhancedFraction' : [0.01, 0.015], 'enhancedWidth' : [1, 3], 'alphaSvalue' : [0.06825, 0.20475], 'pTmin' : [0.25, 0.75], 'pTminChgQ' : [0.25, 0.75]}
+    ranges = {'probStoUD' : [0.1085, 0.3255], 'probQQtoQ' : [0.0405, 0.1215], 'probSQtoQQ' : [0.4575, 1], 'probQQ1toQQ0' : [0.01375, 0.04125], 'mesonUDvector' : [0.25, 0.75], 'mesonSvector' : [0.275, 0.825], 'mesonCvector' : [0.44, 1.32], 'mesonBvector' : [1.1, 3], 'etaSup' : [0.3, 0.9], 'etaPrimeSup' : [0.06, 0.18], 'popcornSpair' : [0.9, 1], 'popcornSmeson' : [0.5, 0.75], 'aLund' : [0.25, 1.02], 'bLund' : [0.49, 1.47], 'aExtraSquark' : [0, 0.0001], 'aExtraDiquark' : [0.485, 1.455], 'rFactC' : [0.66, 1.98], 'rFactB' : [0.4275, 1.2825], 'sigma' : [0.1675, 0.5025], 'enhancedFraction' : [0.01, 0.015], 'enhancedWidth' : [1, 3], 'alphaSvalue' : [0.06825, 0.20475], 'pTmin' : [0.25, 0.75], 'pTminChgQ' : [0.25, 0.75]}
 
     # ranges that are limits of allowed by pythia
-    # ranges = ranges = {'probStoUD': [0, 1], 'probQQtoQ': [0, 1], 'probSQtoQQ': [0, 1], 'probQQ1toQQ0': [0, 1], 'mesonUDvector': [0, 3], 'mesonSvector': [0, 3], 'mesonCvector': [0, 3], 'mesonBvector': [0, 3], 'etaSup': [0, 1], 'etaPrimeSup': [0, 1], 'popcornSpair': [0.9, 1], 'popcornSmeson': [0.5, 1], 'aLund': [0.2, 2], 'bLund': [0.2, 2], 'aExtraSquark': [0, 2], 'aExtraDiquark': [0, 2], 'rFactC': [0, 2], 'rFactB': [0, 2], 'sigma': [0, 1], 'enhancedFraction': [0.01, 1], 'enhancedWidth': [1, 10], 'alphaSvalue': [0.06, 0.25], 'pTmin': [0.1, 2], 'pTminChgQ': [0.1, 2]}
+    # ranges = {'probStoUD': [0, 1], 'probQQtoQ': [0, 1], 'probSQtoQQ': [0, 1], 'probQQ1toQQ0': [0, 1], 'mesonUDvector': [0, 3], 'mesonSvector': [0, 3], 'mesonCvector': [0, 3], 'mesonBvector': [0, 3], 'etaSup': [0, 1], 'etaPrimeSup': [0, 1], 'popcornSpair': [0.9, 1], 'popcornSmeson': [0.5, 1], 'aLund': [0.2, 2], 'bLund': [0.2, 2], 'aExtraSquark': [0, 2], 'aExtraDiquark': [0, 2], 'rFactC': [0, 2], 'rFactB': [0, 2], 'sigma': [0, 1], 'enhancedFraction': [0.01, 1], 'enhancedWidth': [1, 10], 'alphaSvalue': [0.06, 0.25], 'pTmin': [0.1, 2], 'pTminChgQ': [0.1, 2]}
 
     paramNames = ['alphaSvalue', 'pTminChgQ', 'pTmin', 'rFactC', 'bLund', 'rFactB', 'aExtraSquark', 'sigma', 'aExtraDiquark', 'probStoUD', 'etaSup', 'probQQ1toQQ0', 'mesonSvector', 'mesonUDvector', 'probQQtoQ', 'etaPrimeSup', 'probSQtoQQ', 'mesonBvector', 'mesonCvector']
     paramRanges = []
@@ -38,13 +40,14 @@ def main(args):
     template = f.read()
     f.close()
 
-    condorCommands = ''
+    condorCommands = template
     for i in range(populationSize):
         condorCommands += 'Executable = submissions/' + str(i) + '.sh\nQueue 1\n'
-    f = open('commands.txt', 'w+')
+    f = open('submit.jdl', 'w+')
     f.write(condorCommands)
     f.close()
     header = '#!/bin/sh\n'
+    subprocess.call(['chmod', '+x', './process_commands.sh'])
     
     initialPopulation = [monashParamValues, professorParamValues]
     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
@@ -52,7 +55,7 @@ def main(args):
         population = opt.ask()
         for i in range(len(population)):
             #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))
-            ne = str(int(1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4)))
+            ne = str(int(maxEvents/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4)))
             pv = str(population[i])[1:-1]
             pn = ','.join(paramNames)
             id = str(i)
@@ -60,9 +63,9 @@ def main(args):
             f = open('submissions/' + str(i) + '.sh', 'w+')
             f.write(header + cmd)
             f.close()
-            subprocess.run('chmod +x submissions/' + str(i) + '.sh')
+            subprocess.call(['chmod', '+x', 'submissions/' + str(i) + '.sh'])
     
-        subprocess.run('./process_commands.sh')
+        subprocess.call(['./process_commands.sh'])
     
         fitnesses = []
         for i in range(len(population)):
@@ -85,5 +88,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--generations', help='number of generations', type=int, default=50)
     parser.add_argument('-p', '--population-size', help='population size', type=int, default=400)
+    parser.add_argument('-e', '--max-events', help='maximum number of events to run (final stage of population)', type=int, default=250000)
     args = parser.parse_args()
     main(args)

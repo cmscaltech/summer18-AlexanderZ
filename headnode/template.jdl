@@ -7,7 +7,6 @@ when_to_transfer_output = ON_EXIT
 transfer_output = True
 Requirements=TARGET.OpSysAndVer=="CentOS7"
 +SingularityImage = "/data/azlokapa/surf2018/surf2018-onlyclone.simg"
-transfer_input_files = test.py
 +AccountingGroup = "cms_local.azlokapa"
 +InteractiveUser = True
 +RunAsOwner = True
