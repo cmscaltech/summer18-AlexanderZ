@@ -59,7 +59,7 @@ def main(args):
             pv = str(population[i])[1:-1]
             pn = ','.join(paramNames)
             id = str(i)
-            cmd = 'python -c 8 -p ' + pv + ' -n ' + pn + ' -m ' + metric + ' -e ' + ne + ' -i ' + id + '\n'
+            cmd = 'python master.py -c 8 -p ' + pv + ' -n ' + pn + ' -m ' + metric + ' -e ' + ne + ' -i ' + id + '\n'
             f = open('submissions/' + str(i) + '.sh', 'w+')
             f.write(header + cmd)
             f.close()
