@@ -1,4 +1,4 @@
-Caltech SURF 2018: Automated Pythia Tune
+Caltech SURF 2018: Evolutionary Pythia Tune with Distributed Computing
 =====================================================
 
 This is an improvement using genetic algorithms and fitting experimental data (instead of simulated data) compared to the original Bayesian optimization framework for tuning a Monte Carlo event generator, as described in the [article](https://arxiv.org/abs/1610.08328) below:
@@ -18,14 +18,10 @@ This is an improvement using genetic algorithms and fitting experimental data (i
 
 The framework should now be ready to use. If you like, you are welcome to familiarize yourself with basic usage of Spearmint and/or PYTHIA by looking at the examples they provide.
 
-**STEP 2: Set up the tune**
+**STEP 2: Set up the cluster**
 
-The tuning configuration is specified in the `tune_config.json` file at the top-level directory. The user should specify all the variables in this json file. The meaning of these variables are explained below: 
-
-- `N_events`: number of PYTHIA events to generate per query 
-- `n_cores`: number of virtual cores to parallelize the PYTHIA event generation, e.g. if `N_events` is 100,000 and `n_cores` is 5, then the generation is parallelized with 5 processes and each core generates 20,000 events 
-- `block1(2,3)`: the "block" to tune. The meaning of these blocks is described in our [article](https://arxiv.org/abs/1610.08328). Block1 is a 3-parameter tuning problem, while block2 and block3 have 6 and 11 parameters respectively. Whether to tune a block is specified by a Pythonic boolean, `"True"` or `"False"`. At least one of the three needs to be `"True"`, you can also choose to turn on two or even all three blocks 
+Place the files in the directory `headnode` onto the head node of the cluster. (The only dependency required on the head node is numpy.) Build an image from the Dockerfile, then edit the `template.jdl` file appropriately to match your system configuration and Docker image path.
 
 **STEP 3: Run the tune**
 
-Now you should be able to run a MC tuning by simply executing the `master.py` code with command `$ python master.py -c <tune_config.json>` at the top-level, where `<tune_config.json>` should be the config file described in the previous step. Additional options for the genetic algorithm tune are `--generations`, `--population-size`, and `--max-events`.
+Run `python headrunner.py` on the head node for the optimization to proceed. It will output fitness histories and parameter histories as `.txt` files in the `headnode` directory.

@@ -1,5 +1,4 @@
 import numpy as np
-from skopt.space import Real, Integer
 from copy import deepcopy
 
 class GA(object):
@@ -8,9 +7,9 @@ class GA(object):
     
     Parameters
     
-    dimensions [list, shape=(n_dims,)]
+    dimensions [list, shape=(n_dims,2,)]
         List of search space dimensions. Each search dimension is an instance of a
-        'Dimension' object ('Real' or 'Integer')
+        'Dimension' object ('Real')
     
     the argument num_iterations in ask specifies the number of generations
     """
@@ -29,20 +28,16 @@ class GA(object):
         for i in range(len(population), populationSize):
             chromosome = []
             for j in range(0, self.numParams):
-                gene = float(self.paramRanges[j].rvs()[0])
+                gene = np.random.uniform(self.paramRanges[j][0], self.paramRanges[j][1])
                 chromosome.append(gene)
             population.append(chromosome)
         self.population = population
         
     
     def ask(self):
-        rounded = deepcopy(self.population)
-        for i in range(len(self.population)):
-            for j in range(len(self.paramRanges)):
-                if isinstance(self.paramRanges[j], Integer):
-                    rounded[i][j] = int(rounded[i][j])
-#         print('Asked for:', rounded)
-        return rounded
+        popCopy = deepcopy(self.population)
+#         print('Asked for:', popCopy)
+        return popCopy
     
     # needs params/results to have length populationSize
     def tell(self, params, results, generation):
@@ -113,10 +108,10 @@ class GA(object):
         return child
     
     def cap_gene(self, gene, i):
-        if gene < self.paramRanges[i].low:
-            gene = float(self.paramRanges[i].low)
-        elif gene > self.paramRanges[i].high:
-            gene = float(self.paramRanges[i].high)
+        if gene < self.paramRanges[i][0]:
+            gene = float(self.paramRanges[i][0])
+        elif gene > self.paramRanges[i][1]:
+            gene = float(self.paramRanges[i][1])
         return gene
     
     def mutate(self, chromosomeOrig, generation):
@@ -125,9 +120,9 @@ class GA(object):
             mutation = 1 - np.power(np.random.random(), np.power(1 - generation/self.maxGenerations, self.nonuniformityMutationConstant))
             
             if np.random.random() > 0.5:
-                mutation *= self.paramRanges[i].high - chromosome[i]
+                mutation *= self.paramRanges[i][1] - chromosome[i]
             else:
-                mutation *= -(chromosome[i] - self.paramRanges[i].low)
+                mutation *= -(chromosome[i] - self.paramRanges[i][0])
             chromosome[i] += mutation
             chromosome[i] = self.cap_gene(chromosome[i], i)
         return chromosome

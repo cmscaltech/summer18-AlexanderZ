@@ -11,7 +11,7 @@ import scipy.stats
 
 WorkHOME = os.environ['WorkHOME']
 
-def get_objective_func(params, metric, N_events=None):
+def get_objective_func(params, metric, N_events, n_cores):
 
     bin_widths_block1 = [0.025,0.025,0.05,0.05,0.032,0.032,0.015,0.015,0.02,0.02]
     bin_widths_block2 = [0.2,0.2,0.05,0.05]
@@ -31,15 +31,6 @@ def get_objective_func(params, metric, N_events=None):
 
     gen_pythia_input_from_dict(params,pars_outputFile)
 
-    config_file = '{}/tune_config.json'.format(WorkHOME)
-
-    config = load_config(config_file)
-
-    n_cores = config['n_cores']
-    
-    if N_events is None:
-        N_events = config['N_events']
-
     Nevents, remainder = divmod(N_events,n_cores)
     if remainder != 0:
         Nevents += 1
@@ -48,9 +39,9 @@ def get_objective_func(params, metric, N_events=None):
 
     combine_output(n_cores,csv_Dir,bin_widths_block1,bin_widths_block2,outputFile_bin_contents,outputFile_bin_errors)
 
-    blocks = []
-    for i in range(1,4):
-        blocks.append(str_to_bool(config['block{}'.format(i)]))
+    blocks = [True, True, True]
+#     for i in range(1,4):
+#         blocks.append(str_to_bool(config['block{}'.format(i)]))
     
     if metric == 'chi2':
         m = get_chi2(blocks,object_contents,object_errors,tune_contents,tune_errors)
