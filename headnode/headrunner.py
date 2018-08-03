@@ -42,11 +42,12 @@ def main(args):
 
     condorCommands = template
     for i in range(populationSize):
+#         condorCommands += 'transfer_output_files = surf2018/' + str(i) + '.txt\n'
         condorCommands += 'Executable = submissions/' + str(i) + '.sh\nQueue 1\n'
     f = open('submit.jdl', 'w+')
     f.write(condorCommands)
     f.close()
-    header = '#!/bin/sh\n'
+    header = '#!/bin/sh\ngit clone https://github.com/quantummind/surf2018.git\ncd surf2018/pythia_space\nmake PYTHIA8_HOME=/root_download/pythia8235\ncd ../\n'
     subprocess.call(['chmod', '+x', './process_commands.sh'])
     
     initialPopulation = [monashParamValues, professorParamValues]

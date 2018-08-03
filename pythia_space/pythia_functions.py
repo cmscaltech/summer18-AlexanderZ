@@ -384,8 +384,8 @@ def get_scipy_hist_metric(blocks,object_contents,object_errors,tune_contents,tun
 #                               quotechar=" ",lineterminator="\n",quoting=csv.QUOTE_ALL)
 
     for ihist in range(len(lists[0])):
-        fit = lists[0][ihist]
-        true = lists[2][ihist]
+        true = lists[0][ihist]
+        fit = lists[2][ihist]
         indicesToRemove = []
         for i in range(len(fit)):
             if fit[i] == 0. or true[i] == 0.:
@@ -438,8 +438,8 @@ def get_scipy_cts_metric(blocks,object_contents,object_errors,tune_contents,tune
         true = []
         samples = 1e5
         for ibin in range(len(lists[0][ihist])):
-            fit_value = lists[0][ihist][ibin]
-            true_value = lists[2][ihist][ibin]
+            true_value = lists[0][ihist][ibin]
+            fit_value = lists[2][ihist][ibin]
             if np.isnan(fit_value):
                 fit_value = 0
             if np.isnan(true_value):

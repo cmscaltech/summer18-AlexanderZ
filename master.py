@@ -5,7 +5,6 @@ import json
 from utils.general_utils import str_to_bool,params_to_tune,generate_pars_dict
 from pythia_space.pythia_functions import get_objective_func
 import numpy as np
-from genetic_algorithm import GA
 
 def main(args):
     paramVals_str = args.params
