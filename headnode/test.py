@@ -1,3 +1,3 @@
-f = open('test.txt', 'w+')
+f = open('fitnesses/test.txt', 'w+')
 f.write('hi')
 f.close()
