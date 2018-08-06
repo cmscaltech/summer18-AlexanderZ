@@ -53,7 +53,7 @@ def main(args):
     header = '#!/bin/sh\ntar -xzf surf2018.tar.gz\ncd surf2018/pythia_space\nmake PYTHIA8_HOME=/root_download/pythia8235\ncd ../\nexport WorkHOME=/srv/surf2018\n'
     subprocess.call(['chmod', '+x', './process_commands.sh'])
     subprocess.call(['rm', '-r', 'submissions'])
-    subprocess.call(['mkdir', 'submissions log error out'])
+    subprocess.call(['mkdir', 'submissions', 'log', 'error', 'out'])
     
     initialPopulation = [monashParamValues, professorParamValues]
     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
