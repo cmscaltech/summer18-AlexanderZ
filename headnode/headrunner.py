@@ -7,6 +7,7 @@ def main(args):
     populationSize = args.population_size
     generations = args.generations
     maxEvents = args.max_events
+    numMachines = args.machines
     
     # ranges to improve monash (+/- 50% of monash tune values, edited so professor params are within range)
     ranges = {'probStoUD' : [0.1085, 0.3255], 'probQQtoQ' : [0.0405, 0.1215], 'probSQtoQQ' : [0.4575, 1], 'probQQ1toQQ0' : [0.01375, 0.04125], 'mesonUDvector' : [0.25, 0.75], 'mesonSvector' : [0.275, 0.825], 'mesonCvector' : [0.44, 1.32], 'mesonBvector' : [1.1, 3], 'etaSup' : [0.3, 0.9], 'etaPrimeSup' : [0.06, 0.18], 'popcornSpair' : [0.9, 1], 'popcornSmeson' : [0.5, 0.75], 'aLund' : [0.25, 1.02], 'bLund' : [0.49, 1.47], 'aExtraSquark' : [0, 0.0001], 'aExtraDiquark' : [0.485, 1.455], 'rFactC' : [0.66, 1.98], 'rFactB' : [0.4275, 1.2825], 'sigma' : [0.1675, 0.5025], 'enhancedFraction' : [0.01, 0.015], 'enhancedWidth' : [1, 3], 'alphaSvalue' : [0.06825, 0.20475], 'pTmin' : [0.25, 0.75], 'pTminChgQ' : [0.25, 0.75]}
@@ -44,9 +45,8 @@ def main(args):
     f.close()
 
     condorCommands = template
-    for i in range(populationSize):
-#         condorCommands += 'transfer_output_files = surf2018/' + str(i) + '.txt\n'
-        condorCommands += 'Executable = submissions/' + str(i) + '.sh\narguments=' + str(i) + '\nError = ../error/job.' + str(i) + '\nOutput = ../out/job.' + str(i) + '\nLog = ../log/job.' + str(i) + '\nQueue 1\n'
+    for i in range(numMachines):
+        condorCommands += 'Executable = submissions/' + str(i) + '.sh\nError = ../error/job.' + str(i) + '\nOutput = ../out/job.' + str(i) + '\nLog = ../log/job.' + str(i) + '\nQueue 1\n'
     f = open('submit.jdl', 'w+')
     f.write(condorCommands)
     f.close()
@@ -57,21 +57,27 @@ def main(args):
     
     initialPopulation = [monashParamValues, professorParamValues]
     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
+    pn = ','.join(paramNames)
+    batch_size = len(population)//numMachines
     for g in range(generations):
         subprocess.call(['rm', '-r', 'fitnesses'])
         subprocess.call(['mkdir', 'fitnesses'])
         population = opt.ask()
+        
+        ne = str(int(maxEvents/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4)))
+        pv = ''
         for i in range(len(population)):
             #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))
-            ne = str(int(maxEvents/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4)))
-            pv = ','.join(str(v) for v in population[i])
-            pn = ','.join(paramNames)
-            cmd = 'python master.py -c 8 -p "' + pv + '" -n "' + pn + '" -m ' + metric + ' -e ' + ne + ' -i f\n'
-            cmd += 'cd ../\npython file_transfer.py -n ' + str(i) + '\n'
-            f = open('submissions/' + str(i) + '.sh', 'w+')
-            f.write(header + cmd)
-            f.close()
-            subprocess.call(['chmod', '+x', 'submissions/' + str(i) + '.sh'])
+            pv += ',' + ','.join(str(v) for v in population[i])
+            
+            if i % batch_size == 0:
+                cmd = 'python master.py -c 8 -p "' + pv[1:] + '" -n "' + pn + '" -m ' + metric + ' -e ' + ne + ' -i f\n'
+                cmd += 'cd ../\npython file_transfer.py -n ' + str(i // batch_size) + ' -t ' + str(batch_size) + '\n'
+                f = open('submissions/' + str(i) + '.sh', 'w+')
+                f.write(header + cmd)
+                f.close()
+                subprocess.call(['chmod', '+x', 'submissions/' + str(i) + '.sh'])
+                pv = ''
     
         subprocess.call(['./process_commands.sh'])
     
@@ -97,5 +103,6 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--generations', help='number of generations', type=int, default=50)
     parser.add_argument('-p', '--population-size', help='population size', type=int, default=400)
     parser.add_argument('-e', '--max-events', help='maximum number of events to run (final stage of population)', type=int, default=250000)
+    parser.add_argument('-m', '--machines', help='number of machines in cluster to run on (population must be divisible by this)', type=int, default=20)
     args = parser.parse_args()
     main(args)
