@@ -9,7 +9,7 @@ import numpy as np
 def main(args):
     paramVals_str = args.params
     names = args.names
-    paramVals = [float(s) for s in paramVals_str.split(',')]
+    paramVals = [float(s.replace('"', '')) for s in paramVals_str.split(',')]
     paramNames = [s.strip() for s in names.split(',')]
     
     WorkHOME = os.environ['WorkHOME']
