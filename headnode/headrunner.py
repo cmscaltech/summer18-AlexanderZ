@@ -58,7 +58,7 @@ def main(args):
     initialPopulation = [monashParamValues, professorParamValues]
     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
     pn = ','.join(paramNames)
-    batch_size = len(population)//numMachines
+    batch_size = populationSize//numMachines
     for g in range(generations):
         subprocess.call(['rm', '-r', 'fitnesses'])
         subprocess.call(['mkdir', 'fitnesses'])
@@ -66,7 +66,7 @@ def main(args):
         
         ne = str(int(maxEvents/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4)))
         pv = ''
-        for i in range(len(population)):
+        for i in range(populationSize):
             #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))
             pv += ',' + ','.join(str(v) for v in population[i])
             
@@ -82,7 +82,7 @@ def main(args):
         subprocess.call(['./process_commands.sh'])
     
         fitnesses = []
-        for i in range(len(population)):
+        for i in range(populationSize):
             f = open('./fitnesses/' + str(i) + '.txt')
             fitness = float(f.read())
             fitnesses.append(fitness)
