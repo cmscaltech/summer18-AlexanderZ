@@ -1,15 +1,17 @@
 Universe = vanilla
-Error = error/job.$(Process)
-Output = out/job.$(Process)
-Log = log/job.$(Process)
+Error = ../error/job.$(Process)
+Output = ../out/job.$(Process)
+Log = ../log/job.$(Process)
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 transfer_output = True
 Requirements=TARGET.OpSysAndVer=="CentOS7"
-+SingularityImage = "/data/azlokapa/surf2018/surf2018-onlyclone.simg"
++SingularityImage = "/data/azlokapa/surf2018/surf2018-testing.simg"
 +AccountingGroup = "cms_local.azlokapa"
 +InteractiveUser = True
 +RunAsOwner = True
 run_as_owner = True
+initialdir = ./fitnesses
+transfer_input_files = ../file_transfer.py,../surf2018.tar.gz
 RequestMemory = 2000
-RequestCpus = 1
+RequestCpus = 8

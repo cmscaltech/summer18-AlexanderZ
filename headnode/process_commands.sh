@@ -12,7 +12,7 @@ do
     outputSize=`ls fitnesses | wc -l`
     echo "currently have $outputSize fitness files"
     echo $(condor_q)
-    sleep 2
+    sleep 5
 done
 
 echo 'All files found'

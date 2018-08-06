@@ -69,11 +69,11 @@ RUN cd /root_download && \
     ./configure && \
     make
 
-RUN git clone https://github.com/quantummind/surf2018.git
-
-ENV WorkHOME=/surf2018
-RUN cd /surf2018/pythia_space && \
-    make PYTHIA8_HOME=/root_download/pythia8235
-WORKDIR /surf2018
+# RUN git clone https://github.com/quantummind/surf2018.git
+# 
+# ENV WorkHOME=/surf2018
+# RUN cd /surf2018/pythia_space && \
+#     make PYTHIA8_HOME=/root_download/pythia8235
+# WORKDIR /surf2018
 # ENTRYPOINT ["python"]
 # CMD ["master.py", "-c tune_config.json"]

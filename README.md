@@ -24,4 +24,4 @@ Place the files in the directory `headnode` onto the head node of the cluster. (
 
 **STEP 3: Run the tune**
 
-Run `python headrunner.py` on the head node for the optimization to proceed. It will output fitness histories and parameter histories as `.txt` files in the `headnode` directory.
+In the `headnode` directory, run `mkdir out log error fitnesses submissions`. Run `python headrunner.py` on the head node for the optimization to proceed. It will output fitness histories and parameter histories as `.txt` files in the `headnode` directory.

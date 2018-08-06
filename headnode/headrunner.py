@@ -35,6 +35,9 @@ def main(args):
     metric = metrics[3]
     prefix = metric + '_'    
 
+    subprocess.call(['git', 'clone', 'https://github.com/quantummind/surf2018.git'])
+    subprocess.call(['tar', 'czf', 'surf2018.tar.gz', 'surf2018'])   
+    subprocess.call(['rm', '-rf', 'surf2018'])
 
     f = open('template.jdl', 'r')
     template = f.read()
@@ -43,24 +46,28 @@ def main(args):
     condorCommands = template
     for i in range(populationSize):
 #         condorCommands += 'transfer_output_files = surf2018/' + str(i) + '.txt\n'
-        condorCommands += 'Executable = submissions/' + str(i) + '.sh\nQueue 1\n'
+        condorCommands += 'Executable = submissions/' + str(i) + '.sh\narguments=' + str(i) + '\nError = ../error/job.' + str(i) + '\nOutput = ../out/job.' + str(i) + '\nLog = ../log/job.' + str(i) + '\nQueue 1\n'
     f = open('submit.jdl', 'w+')
     f.write(condorCommands)
     f.close()
-    header = '#!/bin/sh\ngit clone https://github.com/quantummind/surf2018.git\ncd surf2018/pythia_space\nmake PYTHIA8_HOME=/root_download/pythia8235\ncd ../\n'
+    header = '#!/bin/sh\ntar -xzf surf2018.tar.gz\ncd surf2018/pythia_space\nmake PYTHIA8_HOME=/root_download/pythia8235\ncd ../\nexport WorkHOME=/srv/surf2018\n'
     subprocess.call(['chmod', '+x', './process_commands.sh'])
+    subprocess.call(['rm', '-r', 'submissions'])
+    subprocess.call(['mkdir', 'submissions'])
     
     initialPopulation = [monashParamValues, professorParamValues]
     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
     for g in range(generations):
+        subprocess.call(['rm', '-r', 'fitnesses'])
+        subprocess.call(['mkdir', 'fitnesses'])
         population = opt.ask()
         for i in range(len(population)):
             #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))
             ne = str(int(maxEvents/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4)))
-            pv = str(population[i])[1:-1]
+            pv = ','.join(str(v) for v in population[i])
             pn = ','.join(paramNames)
-            id = str(i)
-            cmd = 'python master.py -c 8 -p ' + pv + ' -n ' + pn + ' -m ' + metric + ' -e ' + ne + ' -i ' + id + '\n'
+            cmd = 'python master.py -c 8 -p "' + pv + '" -n "' + pn + '" -m ' + metric + ' -e ' + ne + ' -i f\n'
+            cmd += 'cd ../\npython file_transfer.py -n ' + str(i) + '\n'
             f = open('submissions/' + str(i) + '.sh', 'w+')
             f.write(header + cmd)
             f.close()
