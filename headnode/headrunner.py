@@ -79,7 +79,7 @@ def main(args):
                 subprocess.call(['chmod', '+x', 'submissions/' + str(i // batch_size) + '.sh'])
                 pv = ''
     
-        subprocess.call(['./process_commands.sh populationSize'])
+        subprocess.call(['./process_commands.sh', str(populationSize)])
     
         fitnesses = []
         for i in range(populationSize):
