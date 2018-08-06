@@ -4,7 +4,7 @@ echo 'Starting python runs'
 
 # run condor submissions
 condor_submit submit.jdl
-populationSize=`ls submissions | wc -l`
+populationSize=$1
 echo "expecting $populationSize population members"
 outputSize=0
 while [ $outputSize -lt $populationSize ]

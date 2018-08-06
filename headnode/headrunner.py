@@ -53,7 +53,7 @@ def main(args):
     header = '#!/bin/sh\ntar -xzf surf2018.tar.gz\ncd surf2018/pythia_space\nmake PYTHIA8_HOME=/root_download/pythia8235\ncd ../\nexport WorkHOME=/srv/surf2018\n'
     subprocess.call(['chmod', '+x', './process_commands.sh'])
     subprocess.call(['rm', '-r', 'submissions'])
-    subprocess.call(['mkdir', 'submissions'])
+    subprocess.call(['mkdir', 'submissions log error out'])
     
     initialPopulation = [monashParamValues, professorParamValues]
     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
@@ -73,13 +73,13 @@ def main(args):
             if i % batch_size == 0:
                 cmd = 'python master.py -c 8 -p "' + pv[1:] + '" -n "' + pn + '" -m ' + metric + ' -e ' + ne + ' -i f\n'
                 cmd += 'cd ../\npython file_transfer.py -n ' + str(i // batch_size) + ' -t ' + str(batch_size) + '\n'
-                f = open('submissions/' + str(i) + '.sh', 'w+')
+                f = open('submissions/' + str(i // batch_size) + '.sh', 'w+')
                 f.write(header + cmd)
                 f.close()
-                subprocess.call(['chmod', '+x', 'submissions/' + str(i) + '.sh'])
+                subprocess.call(['chmod', '+x', 'submissions/' + str(i // batch_size) + '.sh'])
                 pv = ''
     
-        subprocess.call(['./process_commands.sh'])
+        subprocess.call(['./process_commands.sh populationSize'])
     
         fitnesses = []
         for i in range(populationSize):
