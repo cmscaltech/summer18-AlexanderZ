@@ -23,7 +23,7 @@ def main(args):
         i += 1
     
     fitness = get_objective_func(params, args.metric, args.n_events, args.n_cores)
-    f = open('./fitnesses/' + args.id + '.txt', 'w+')
+    f = open(args.id + '.txt', 'w+')
     f.write(str(fitness))
     f.close()
 
