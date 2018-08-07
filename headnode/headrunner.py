@@ -1,4 +1,5 @@
 from genetic_algorithm import GA
+from particle_swarm_optimizer import PSO
 import numpy as np
 import subprocess
 import argparse
@@ -56,7 +57,8 @@ def main(args):
     subprocess.call(['mkdir', 'submissions', 'log', 'error', 'out'])
     
     initialPopulation = [monashParamValues, professorParamValues]
-    opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
+#     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
+    opt = PSO(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
     pn = ','.join(paramNames)
     batch_size = populationSize//numMachines
     for g in range(generations):
@@ -94,15 +96,17 @@ def main(args):
         fitnessHistory.append(1/bestFit[1])
         avgFitnessHistory.append(1/(sum(fitnesses)/len(fitnesses)))
 
-    np.savetxt(prefix + 'gaParamHistory.txt', np.array(paramHistory))
-    np.savetxt(prefix + 'gaAvgHistory.txt', np.array(avgFitnessHistory))
-    np.savetxt(prefix + 'gaMaxHistory.txt', np.array(fitnessHistory))
+    np.savetxt(prefix + 'psoParamHistory.txt', np.array(paramHistory))
+    np.savetxt(prefix + 'psoAvgHistory.txt', np.array(avgFitnessHistory))
+    np.savetxt(prefix + 'psoMaxHistory.txt', np.array(fitnessHistory))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-g', '--generations', help='number of generations', type=int, default=50)
-    parser.add_argument('-p', '--population-size', help='population size', type=int, default=400)
+    parser.add_argument('-g', '--generations', help='number of generations', type=int, default=10000)
+    parser.add_argument('-p', '--population-size', help='population size', type=int, default=50)
+#     parser.add_argument('-g', '--generations', help='number of generations', type=int, default=50)
+#     parser.add_argument('-p', '--population-size', help='population size', type=int, default=400)
     parser.add_argument('-e', '--max-events', help='maximum number of events to run (final stage of population)', type=int, default=250000)
-    parser.add_argument('-m', '--machines', help='number of machines in cluster to run on (population must be divisible by this)', type=int, default=20)
+    parser.add_argument('-m', '--machines', help='number of machines in cluster to run on (population must be divisible by this)', type=int, default=50)
     args = parser.parse_args()
     main(args)
