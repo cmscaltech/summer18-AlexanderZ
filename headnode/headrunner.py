@@ -59,9 +59,11 @@ def main(args):
     initialPopulation = [monashParamValues, professorParamValues]
     
 #     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
+#     sign = -1
     
     v_max = np.array([0.3, 1.2, 0.8, 2.0, 1.9, 2.1, 0.05, 0.6, 2.8, 0.4, 1.8, 0.1, 1.6, 1.1, 0.2, 0.3, 2.0, 4.1, 1.8])
     opt = PSO(paramRanges, populationSize, generations, initialPopulation=initialPopulation, v_max=v_max)
+    sign = 1
     
     pn = ','.join(paramNames)
     batch_size = populationSize//numMachines
@@ -93,12 +95,12 @@ def main(args):
             fitness = float(f.read())
             fitnesses.append(fitness)
         print 'finished GENERATION {} out of {}'.format(g+1, generations)
-        bestFit = opt.tell(population, 1/np.array(fitnesses), g)
+        bestFit = opt.tell(population, sign*np.array(fitnesses), g)
         bestParams = bestFit[0]
         print 'best params so far: {}'.format(bestParams)
         paramHistory.append(np.array(bestFit[0]))
-        fitnessHistory.append(1/bestFit[1])
-        avgFitnessHistory.append(1/(sum(fitnesses)/len(fitnesses)))
+        fitnessHistory.append(sign*bestFit[1])
+        avgFitnessHistory.append(sign*(sum(fitnesses)/len(fitnesses)))
 
     np.savetxt(prefix + 'psoParamHistory.txt', np.array(paramHistory))
     np.savetxt(prefix + 'psoAvgHistory.txt', np.array(avgFitnessHistory))
