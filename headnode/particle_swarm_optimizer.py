@@ -81,7 +81,7 @@ class PSO(object):
         
         for p in range(self.populationSize):
             for i in range(self.numParams):
-                population[p][i] = self.cap_gene(population[p][i], i)
+                self.population[p][i] = self.cap_gene(self.population[p][i], i)
         
         bestFit = self.fitness[bestInd]
         self.fitness = np.array([None]*self.populationSize)
