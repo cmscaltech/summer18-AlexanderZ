@@ -7,24 +7,23 @@ class PSO(object):
     
     Parameters
     
-    dimensions [list, shape=(n_dims,)]
-        List of search space dimensions. Each search dimension is an instance of a
-        'Dimension' object ('Real' or 'Integer')
+    dimensions [list, shape=(n_dims,2,)]
+        List of search space dimensions.
     
     the argument num_iterations in ask specifies the number of generations
     """
     
     c1 = 2
     c2 = 2
-    v_max = 20   # TODO should be array
     
-    def __init__(self, dimensions, populationSize=40, maxGenerations=10000, initialPopulation=[]):
+    def __init__(self, dimensions, populationSize=40, maxGenerations=10000, initialPopulation=[], v_max=0.5):
         self.paramRanges = dimensions
         self.numParams = len(self.paramRanges)
         self.populationSize = populationSize
         self.numElite = populationSize // 5
         self.fitness = np.array([None]*populationSize)
         self.maxGenerations = maxGenerations
+        self.v_max = v_max
         
         population = initialPopulation
         for i in range(len(population), populationSize):
@@ -41,10 +40,10 @@ class PSO(object):
     
     def ask(self):
         rounded = deepcopy(self.population)
-        for i in range(len(self.population)):
-            for j in range(len(self.paramRanges)):
-                if isinstance(self.paramRanges[j], Integer):
-                    rounded[i][j] = int(rounded[i][j])
+#         for i in range(len(self.population)):
+#             for j in range(len(self.paramRanges)):
+#                 if isinstance(self.paramRanges[j], Integer):
+#                     rounded[i][j] = int(rounded[i][j])
 #         print('Asked for:', rounded)
         return rounded
     

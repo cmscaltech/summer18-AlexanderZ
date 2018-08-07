@@ -57,8 +57,12 @@ def main(args):
     subprocess.call(['mkdir', 'submissions', 'log', 'error', 'out'])
     
     initialPopulation = [monashParamValues, professorParamValues]
+    
 #     opt = GA(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
-    opt = PSO(paramRanges, populationSize, generations, initialPopulation=initialPopulation)
+    
+    v_max = np.array([0.3, 1.2, 0.8, 2.0, 1.9, 2.1, 0.05, 0.6, 2.8, 0.4, 1.8, 0.1, 1.6, 1.1, 0.2, 0.3, 2.0, 4.1, 1.8])
+    opt = PSO(paramRanges, populationSize, generations, initialPopulation=initialPopulation, v_max=v_max)
+    
     pn = ','.join(paramNames)
     batch_size = populationSize//numMachines
     for g in range(generations):

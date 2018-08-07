@@ -8,8 +8,7 @@ class GA(object):
     Parameters
     
     dimensions [list, shape=(n_dims,2,)]
-        List of search space dimensions. Each search dimension is an instance of a
-        'Dimension' object ('Real')
+        List of search space dimensions.
     
     the argument num_iterations in ask specifies the number of generations
     """
