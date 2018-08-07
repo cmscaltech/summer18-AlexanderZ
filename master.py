@@ -24,7 +24,10 @@ def main(args):
         for p in paramNames:
             params[p] = paramVals[i]
             i += 1
-    
+        print 'params' + str(params)
+        print 'metric' + str(args.metric)
+        print 'events' + str(args.n_events)
+        print 'cores' + str(args.n_cores)
         fitness = get_objective_func(params, args.metric, args.n_events, args.n_cores)
         f = open(args.id + str(set) + '.txt', 'w+')
         f.write(str(fitness))
