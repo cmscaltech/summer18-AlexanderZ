@@ -63,7 +63,7 @@ def main(args):
     
     v_max = np.array([0.3, 1.2, 0.8, 2.0, 1.9, 2.1, 0.05, 0.6, 2.8, 0.4, 1.8, 0.1, 1.6, 1.1, 0.2, 0.3, 2.0, 4.1, 1.8])
     opt = PSO(paramRanges, populationSize, generations, initialPopulation=initialPopulation, v_max=v_max)
-    sign = 1
+    sign = -1
     
     pn = ','.join(paramNames)
     batch_size = populationSize//numMachines
