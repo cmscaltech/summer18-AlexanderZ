@@ -70,7 +70,7 @@ def main(args):
             #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))
             pv += ',' + ','.join(str(v) for v in population[i])
             
-            if i % batch_size == 0:
+            if (i+1) % batch_size == 0:
                 cmd = 'python master.py -c 8 -p "' + pv[1:] + '" -n "' + pn + '" -m ' + metric + ' -e ' + ne + ' -i f\n'
                 cmd += 'cd ../\npython file_transfer.py -n ' + str(i // batch_size) + ' -t ' + str(batch_size) + '\n'
                 f = open('submissions/' + str(i // batch_size) + '.sh', 'w+')
