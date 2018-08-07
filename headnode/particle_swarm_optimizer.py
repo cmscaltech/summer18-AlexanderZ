@@ -69,13 +69,13 @@ class PSO(object):
         
         inertia = 0.4 + 0.8*(self.maxGenerations - generation - 1)/(self.maxGenerations - 1)
         
-        bestInd = self.fitness.argsort()[0]
+        bestInd = self.fitness.argsort()[-1]
         bestPopulationMember = self.population[bestInd]
         
         self.bestPreviousPopulation[self.fitness > self.bestPreviousFitnesses] = self.population[self.fitness > self.bestPreviousFitnesses]
         self.bestPreviousFitnesses[self.fitness > self.bestPreviousFitnesses] = self.fitness[self.fitness > self.bestPreviousFitnesses]
         
-        self.velocities = inertia*self.velocities + self.c1*np.random.random()*(self.population - self.bestPreviousPopulation) + self.c2*np.random.random()*(self.population - bestPopulationMember)
+        self.velocities = inertia*self.velocities - self.c1*np.random.random()*(self.population - self.bestPreviousPopulation) - self.c2*np.random.random()*(self.population - bestPopulationMember)
         self.velocities = np.clip(self.velocities, -self.v_max, self.v_max)
         self.population += self.velocities
         
