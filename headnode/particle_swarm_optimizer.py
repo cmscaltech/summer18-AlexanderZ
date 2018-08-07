@@ -1,5 +1,4 @@
 import numpy as np
-from skopt.space import Real, Integer
 from copy import deepcopy
 
 class PSO(object):
@@ -31,7 +30,7 @@ class PSO(object):
         for i in range(len(population), populationSize):
             paramSet = []
             for j in range(0, self.numParams):
-                gene = float(self.paramRanges[j].rvs()[0])
+                gene = np.random.uniform(self.paramRanges[j][0], self.paramRanges[j][1])
                 paramSet.append(gene)
             population.append(paramSet)
         self.population = np.array(population)
@@ -81,7 +80,18 @@ class PSO(object):
         self.velocities = np.clip(self.velocities, -self.v_max, self.v_max)
         self.population += self.velocities
         
+        for p in range(self.populationSize):
+            for i in range(self.numParams):
+                population[p][i] = self.cap_gene(population[p][i], i)
+        
         bestFit = self.fitness[bestInd]
         self.fitness = np.array([None]*self.populationSize)
         
         return bestFit
+    
+    def cap_gene(self, gene, i):
+        if gene < self.paramRanges[i][0]:
+            gene = float(self.paramRanges[i][0])
+        elif gene > self.paramRanges[i][1]:
+            gene = float(self.paramRanges[i][1])
+        return gene
