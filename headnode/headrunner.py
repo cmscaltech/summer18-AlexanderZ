@@ -72,7 +72,8 @@ def main(args):
         subprocess.call(['mkdir', 'fitnesses'])
         population = opt.ask()
         
-        ne = str(int(maxEvents/1.001*(0.001 + 1/(1+np.exp(-(g+1-generations/2)/2)))))
+        ne = str(maxEvents)
+#         ne = str(int(maxEvents/1.001*(0.001 + 1/(1+np.exp(-(g+1-generations/2)/2)))))
         pv = ''
         for i in range(populationSize):
             #fitness = get_objective_func(params, metric, N_events=1000000/0.6*(1/(1+(1-(g+1)/generations)^3) - 0.4))

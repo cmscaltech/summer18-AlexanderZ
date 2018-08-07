@@ -69,7 +69,7 @@ class PSO(object):
         
         inertia = 0.4 + 0.8*(self.maxGenerations - generation - 1)/(self.maxGenerations - 1)
         
-        bestInd = self.fitness.argsort()[-1]
+        bestInd = self.fitness.argsort()[0]
         bestPopulationMember = self.population[bestInd]
         
         self.bestPreviousPopulation[self.fitness > self.bestPreviousFitnesses] = self.population[self.fitness > self.bestPreviousFitnesses]
